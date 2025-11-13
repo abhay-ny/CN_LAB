@@ -1,0 +1,55 @@
+#Program for congestion control using Leaky bucket by Abhay NY
+
+def leaky_bucket():
+    def min_val(x, y):
+        return x if x < y else y
+
+    drop = 0
+    count = 0
+    inp = []
+
+    # User Inputs
+    cap = int(input("Enter the bucket size: "))
+    process = int(input("Enter the processing rate: "))
+    nsec = int(input("Enter the number of seconds you want to simulate: "))
+
+    for i in range(nsec):
+        pkt = int(input(f"Enter the size of the packet entering at {i + 1} sec: "))
+        inp.append(pkt)
+
+    print("\nSecond | Packet Received | Packet Sent | Packet Left | Dropped")
+    print("-----------------------------------------------------------------")
+
+    # Processing each second
+    for i in range(nsec):
+        count += inp[i]
+
+        # If bucket overflows, drop packets
+        if count > cap:
+            drop = count - cap
+            count = cap
+
+        print(f"{i + 1:>6} | {inp[i]:>15} | ", end="")
+        mini = min_val(count, process)
+        print(f"{mini:>11} | {count - mini:>12} | {drop:>7}")
+        count -= mini
+        drop = 0
+
+    # Process remaining packets after input stops
+    i = nsec
+    while count != 0:
+        if count > cap:
+            drop = count - cap
+            count = cap
+
+        print(f"{i + 1:>6} | {0:>15} | ", end="")
+        mini = min_val(count, process)
+        print(f"{mini:>11} | {count - mini:>12} | {drop:>7}")
+        count -= mini
+        i += 1
+        drop = 0
+
+
+# Run the program
+if __name__ == "__main__":
+    leaky_bucket()
