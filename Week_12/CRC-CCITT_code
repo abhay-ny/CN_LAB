@@ -1,0 +1,39 @@
+# Program for error detecting code using CRC-CCITT (16-bits) by Abhay NY
+def xor(a, b):
+    return '0' if a == b else '1'
+
+def divide(dividend, divisor):
+    n = len(divisor)
+    dividend = list(dividend)
+
+    for i in range(len(dividend) - n + 1):
+        if dividend[i] == '1':
+            for j in range(n):
+                dividend[i + j] = xor(dividend[i + j], divisor[j])
+
+    return "".join(dividend[-(n - 1):])   # remainder
+
+gen = input("Enter the generator polynomial:\n")
+k = len(gen) - 1
+
+msg = input("Enter the message:\n")
+
+appended = msg + '0' * k
+print("\nMessage polynomial appended with zeros:")
+print(appended)
+
+remainder = divide(appended, gen)
+print("\nChecksum:")
+print(remainder)
+
+transmitted = msg + remainder
+print("\nMessage with checksum appended:")
+print(transmitted)
+
+received = input("\nEnter received message:\n")
+recv_rem = divide(received, gen)
+
+if set(recv_rem) == {'0'}:
+    print("Received polynomial is error-free")
+else:
+    print("Received polynomial contains errors")
